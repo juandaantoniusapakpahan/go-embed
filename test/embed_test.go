@@ -1,4 +1,4 @@
-package goembed
+package test
 
 import (
 	"embed"
@@ -18,7 +18,7 @@ func TestEmbedString(t *testing.T) {
 	fmt.Println(version)
 }
 
-//go:embed bg.jpg
+//go:embed /bg.jpg
 var foto []byte
 
 func TestEmbedByte(t *testing.T) {
@@ -44,4 +44,20 @@ func TestEmbedMultipleFileString(t *testing.T) {
 
 	c, _ := files.ReadFile("files/c.txt")
 	fmt.Println(string(c))
+}
+
+//go:embed files/*.txt
+
+var folder embed.FS
+
+func TestPathMatcher(t *testing.T) {
+	fileNames, _ := folder.ReadDir("files")
+
+	for _, entry := range fileNames {
+		if !entry.IsDir() {
+			fmt.Println(entry.Name())
+			content, _ := folder.ReadFile("files/" + entry.Name())
+			fmt.Println(string(content))
+		}
+	}
 }
